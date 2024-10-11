@@ -5,10 +5,8 @@ export const CustomScrollBar = ({
 }: {
   element: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
-  const [scrollBarHeight, setScrollBarHeight] = useState(0);
   const thumbRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollRatio, setScrollRatio] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   let thumbTop = 0; // Replaces state
@@ -19,16 +17,6 @@ export const CustomScrollBar = ({
     const contentElement = element.current;
 
     if (contentElement) {
-      const handleResize = () => {
-        const contentHeight = contentElement.scrollHeight;
-        const visibleHeight = contentElement.clientHeight;
-        const thumbHeight = Math.max(
-          (visibleHeight / contentHeight) * visibleHeight,
-          30
-        ); // Thumb should be at least 30px
-        setScrollBarHeight(thumbHeight);
-      };
-
       const handleScroll = () => {
         const scrollTop = contentElement.scrollTop;
         const editorOffsetHeight = contentElement.offsetHeight;
@@ -46,13 +34,10 @@ export const CustomScrollBar = ({
         }
       };
 
-      handleResize(); // Set initial height
       contentElement.addEventListener("scroll", handleScroll);
-      window.addEventListener("resize", handleResize);
 
       return () => {
         contentElement.removeEventListener("scroll", handleScroll);
-        window.removeEventListener("resize", handleResize);
       };
     }
   }, [element]);
@@ -89,9 +74,6 @@ export const CustomScrollBar = ({
       const newScrollTop = newScrollRatio * scrollableHeight;
 
       scrollElement.scrollTop = newScrollTop; // Scroll the content
-      // thumbTop = newThumbTop; // Update thumb's position
-
-      // thumb.style.top = `${thumbTop}px`; // Directly update the thumb's visual position
     }
   };
 
@@ -116,9 +98,6 @@ export const CustomScrollBar = ({
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-    } else {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
