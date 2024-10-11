@@ -13,7 +13,7 @@ export default function App() {
   const editorElement = editorRef.current;
   const componentsElement = componentRef.current;
 
-  const [headerPadding, setHeaderPadding] = useState(0);
+  const [computedPadding, setComputedPadding] = useState(0);
 
   const handleClick = () => {
     setShowComponents(!showComponents);
@@ -33,7 +33,15 @@ export default function App() {
 
   const resizeView = () => {
     // console.log("-->", window.innerWidth - 1800);
-    setHeaderPadding((window.innerWidth - 1800) / 2);
+    const paddingSize = (window.innerWidth - 1800) / 2;
+    console.log("paddingSize", paddingSize);
+    if (paddingSize > 0) {
+      setComputedPadding(paddingSize);
+    } else {
+      if (computedPadding !== 0) {
+        setComputedPadding(0);
+      }
+    }
   };
 
   useEffect(() => {
@@ -44,16 +52,12 @@ export default function App() {
   return (
     <div className="App">
       <div className="main" ref={mainRef}>
-        <div
-          className="Board"
-          style={{ display: "flex", flexDirection: "column" }}
-        >
+        <div className="Board">
           <div
             ref={headerRef}
-            className={`flex Header absolute top-0 right-[${headerPadding}px] left-[${headerPadding}px] max-w-[1800px] w-[100%] m-auto justify-between  z-10 transition-opacity duration-300 ${
+            className={`flex Header absolute top-0 bg-blue-500 text right-[${computedPadding}px] left-[${computedPadding}px] max-w-[1800px] w-[100%] py-5 px-10 justify-between overflow-hidden z-10 transition-opacity duration-300 ${
               headerVisible ? "opacity-100" : "opacity-0"
             }`}
-            style={{ background: "blue", color: "green", padding: "10px" }}
           >
             <div>Logo</div>
             <PreviewButton onClick={handleClick} />
@@ -86,9 +90,9 @@ export default function App() {
                 style={{
                   position: showComponents ? "absolute" : "relative",
                   paddingRight: `${
-                    headerPadding > 0 ? headerPadding : "auto"
+                    computedPadding > 0 ? computedPadding : "0"
                   }px`,
-                  left: `${headerPadding > 0 ? headerPadding : "auto"}px`,
+                  left: `${computedPadding > 0 ? computedPadding : "0"}px`,
                 }}
                 className={`EditorView flex flex-col pt-16 pb-10
                 w-full`}
@@ -118,12 +122,91 @@ export default function App() {
                     preserved.This is some text. It will be displayed exactly as
                     it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
                     New lines and spaces are preserved.This is some text. It
                     will be displayed exactly as it is written. New lines and
                     spaces are preserved.This is some text. It will be displayed
                     exactly as it is written. New lines and spaces are
                     preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved. This is
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will bThis is some text. It will be displayed exactly as it
+                    is written. New lines and spaces are preserved.This is some
+                    text. It will be displayed exactly as it is written. New
+                    lines and spaces are preserved.This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
                     New lines and spaces are preserved.This is some text. It
                     will be displayed exactly as it is written. New lines and
@@ -136,8 +219,8 @@ export default function App() {
                     will be displayed exactly as it is written. New lines and
                     spaces are preserved.This is some text. It will be displayed
                     exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved. This is
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
                     New lines and spaces are preserved.This is some text. It
                     will be displayed exactly as it is written. New lines and
@@ -150,8 +233,8 @@ export default function App() {
                     will be displayed exactly as it is written. New lines and
                     spaces are preserved.This is some text. It will be displayed
                     exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved. This is
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
                     New lines and spaces are preserved.This is some text. It
                     will be displayed exactly as it is written. New lines and
@@ -164,8 +247,8 @@ export default function App() {
                     will be displayed exactly as it is written. New lines and
                     spaces are preserved.This is some text. It will be displayed
                     exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved. This is
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
                     New lines and spaces are preserved.This is some text. It
                     will be displayed exactly as it is written. New lines and
@@ -178,6 +261,38 @@ export default function App() {
                     will be displayed exactly as it is written. New lines and
                     spaces are preserved.This is some text. It will be displayed
                     exactly as it is written. New lines and spaces are
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved. This is some text. It will be displayed exactly
+                    as it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved. New lines and spaces are preserved.This is some
+                    text. It will be displayed exactly as it is written. New
+                    lines and spaces are preserved.This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
                     preserved.This is some text. It will be displayed exactly as
                     it is written. New lines and spaces are preserved. This is
                     some text. It will be displayed exactly as it is written.
@@ -241,41 +356,7 @@ export default function App() {
                     preserved.This is some text. It will be displayed exactly as
                     it is written. New lines and spaces are preserved.This is
                     some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved.This is
-                    some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved.This is some text. It
-                    will be displayed exactly as it is written. New lines and
-                    spaces are preserved. This is some text. It will be
-                    displayed exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved.This is
-                    some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved.This is some text. It
-                    will be displayed exactly as it is written. New lines and
-                    spaces are preserved.This is some text. It will be displayed
-                    exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved.This is
-                    some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved.This is some text. It
-                    will be displayed exactly as it is written. New lines and
-                    spaces are preserved. This is some text. It will be
-                    displayed exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved.This is
-                    some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved.This is some text. It
-                    will be displayed exactly as it is written. New lines and
-                    spaces are preserved.This is some text. It will be displayed
-                    exactly as it is written. New lines and spaces are
-                    preserved.This is some text. It will be displayed exactly as
-                    it is written. New lines and spaces are preserved.This is
-                    some text. It will be displayed exactly as it is written.
-                    New lines and spaces are preserved.This is some text. It
-                    will be displayed exactly as it is written. New lines and
-                    spaces are preserved.
+                    New lines and spaces are preserved.
                   </div>
                   <div
                     style={{
@@ -309,9 +390,9 @@ export default function App() {
                   style={{
                     position: "absolute",
                     paddingLeft: `${
-                      headerPadding > 0 ? headerPadding : "auto"
+                      computedPadding > 0 ? computedPadding : "0"
                     }px`,
-                    right: `${headerPadding > 0 ? headerPadding : "auto"}px`,
+                    right: `${computedPadding > 0 ? computedPadding : "0"}px`,
                   }}
                   className="ComponentsView flex flex-col pt-16 pb-10 w-full"
                 >
