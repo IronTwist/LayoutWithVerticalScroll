@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PreviewButton } from "./PreviewButton";
 import "./styles.css";
+import { CustomScrollBar } from "./custom-scroll";
 
 export default function App() {
   const [showComponents, setShowComponents] = useState(true);
@@ -9,24 +10,36 @@ export default function App() {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const componentRef = useRef<HTMLDivElement | null>(null);
+  const editorElement = editorRef.current;
+  const componentsElement = componentRef.current;
+
+  const [headerPadding, setHeaderPadding] = useState(0);
 
   const handleClick = () => {
     setShowComponents(!showComponents);
   };
 
   const handleViewsScroll = () => {
-    const editorElement = editorRef.current;
-    const componentsElement = componentRef.current;
+    const editorScrollTop = editorElement?.scrollTop as number;
+    const componentsScrollTop = componentsElement?.scrollTop as number;
 
-    const editorScrollTop = editorElement?.scrollTop;
-    const componentsScrollTop = componentsElement?.scrollTop;
-    if (editorScrollTop && componentsScrollTop) {
-      const isHidden =
-        editorScrollTop < 5 &&
-        (showComponents ? componentsScrollTop < 5 : true);
-      setHeaderVisible(isHidden);
-    }
+    const isHidden =
+      editorScrollTop < 5 && (showComponents ? componentsScrollTop < 5 : true);
+
+    setHeaderVisible(isHidden);
+
+    console.log("ScrollableEditor", editorElement?.scrollTop);
   };
+
+  const resizeView = () => {
+    // console.log("-->", window.innerWidth - 1800);
+    setHeaderPadding((window.innerWidth - 1800) / 2);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", resizeView);
+    resizeView();
+  }, []);
 
   return (
     <div className="App">
@@ -37,7 +50,7 @@ export default function App() {
         >
           <div
             ref={headerRef}
-            className={`flex Header absolute top-0 left-[25%] w-1/2 border border-blue-400 justify-between m-auto z-10 transition-opacity duration-300 ${
+            className={`flex Header absolute top-0 right-[${headerPadding}px] left-[${headerPadding}px] max-w-[1800px] w-[100%] m-auto justify-between  z-10 transition-opacity duration-300 ${
               headerVisible ? "opacity-100" : "opacity-0"
             }`}
             style={{ background: "blue", color: "green", padding: "10px" }}
@@ -46,19 +59,21 @@ export default function App() {
             <PreviewButton onClick={handleClick} />
           </div>
           <div
-            className="EditorAndComponets"
+            className="EditorAndComponets flex w-full bg-yellow-400 overflow-y-scroll scrollbar-hide"
             style={{
               display: "flex",
               flexDirection: "row",
+              overflowY: "hidden",
             }}
           >
             <div
-              className={`Editor ${showComponents ? "w-2/3" : "w-full"}`}
+              className={`Editor flex bg-green-400 ${
+                showComponents ? "w-[66.66%]" : "w-full"
+              }`}
               onScroll={handleViewsScroll}
               ref={editorRef}
               style={{
                 position: "relative",
-                border: "1px solid green",
                 height: "100vh",
                 overflowY: "scroll",
                 overflowX: "hidden",
@@ -70,130 +85,216 @@ export default function App() {
               <div
                 style={{
                   position: showComponents ? "absolute" : "relative",
-                  margin: showComponents ? "0" : "auto",
-                  top: "0",
-                  right: "0",
+                  paddingRight: `${
+                    headerPadding > 0 ? headerPadding : "auto"
+                  }px`,
+                  left: `${headerPadding > 0 ? headerPadding : "auto"}px`,
                 }}
-                className="flex flex-col w-2/3 pt-16 pb-10 pr-2"
+                className={`EditorView flex flex-col pt-16 pb-10
+                w-full`}
               >
-                <h3 className="text-xl">Editor view</h3>
-                This is some text. It will be displayed exactly as it is
-                written. New lines and spaces are preserved.This is some text.
-                It will be displayed exactly as it is written. New lines and
-                spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved. This is some text. It will be
-                displayed exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved. This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are preserved.
-                This is some text. It will be displayed exactly as it is
-                written. New lines and spaces are preserved.This is some text.
-                It will be displayed exactly as it is written. New lines and
-                spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved. This is some text. It will be
-                displayed exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved. This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are preserved.
-                This is some text. It will be displayed exactly as it is
-                written. New lines and spaces are preserved.This is some text.
-                It will be displayed exactly as it is written. New lines and
-                spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved. This is some text. It will be
-                displayed exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.This is some
-                text. It will be displayed exactly as it is written. New lines
-                and spaces are preserved.This is some text. It will be displayed
-                exactly as it is written. New lines and spaces are
-                preserved.This is some text. It will be displayed exactly as it
-                is written. New lines and spaces are preserved.
+                <div className="ScrollableEditor bg-yellow-400 flex w-full max-w-[1800px] relative pl-10 pt-10 pb-10">
+                  <div>
+                    <h3 className="text-xl">Editor view</h3>
+                    This is some text. It will be displayed exactly as it is
+                    written. New lines and spaces are preserved.This is some
+                    text. It will be displayed exactly as it is written. New
+                    lines and spaces are preserved.This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved. New lines
+                    and spaces are preserved.This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved. This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved. This is some text. It will be
+                    displayed exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.This is some text. It will be displayed
+                    exactly as it is written. New lines and spaces are
+                    preserved.This is some text. It will be displayed exactly as
+                    it is written. New lines and spaces are preserved.This is
+                    some text. It will be displayed exactly as it is written.
+                    New lines and spaces are preserved.This is some text. It
+                    will be displayed exactly as it is written. New lines and
+                    spaces are preserved.
+                  </div>
+                  <div
+                    style={{
+                      height: "300px",
+                    }}
+                    className="EditorScroll flex flex-col ml-10 bg-gray-400 w-[70px] sticky top-[200px]"
+                  >
+                    <CustomScrollBar element={editorRef} />
+                  </div>
+                </div>
               </div>
             </div>
             {showComponents && (
               <div
-                className="components w-1/3"
+                className="Components bg-green-200 w-1/3"
                 onScroll={handleViewsScroll}
                 ref={componentRef}
                 style={{
                   position: "relative",
-                  border: "1px solid blue",
                   height: "100vh",
                   overflow: "auto",
                   overflowY: "scroll",
@@ -202,69 +303,85 @@ export default function App() {
                   scrollbarColor: "red",
                   textWrap: "balance",
                   textAlign: "center",
-                  padding: "10px",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    top: "0",
-                    left: "0",
-                    marginTop: "60px",
+                    paddingLeft: `${
+                      headerPadding > 0 ? headerPadding : "auto"
+                    }px`,
+                    right: `${headerPadding > 0 ? headerPadding : "auto"}px`,
                   }}
-                  className="flex flex-col w-1/2 pb-10 pl-2"
+                  className="ComponentsView flex flex-col pt-16 pb-10 w-full"
                 >
-                  <h3 className="text-xl">Components</h3>
-                  It will be displayed exactly as it is written. New lines and
-                  spaces are preserved.This is some text. It will be displayed
-                  exactly as it is written. New lines and spaces are preserved.
-                  This is some text. It will be displayed exactly as it is
-                  written. New lines and spaces are preserved.This is some text.
-                  It will be displayed exactly as it is written. New lines and
-                  spaces are preserved.This is some text. It will be displayed
-                  exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved. It will be displayed exactly as it
-                  is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved. This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved. This is
-                  some text. It will be displayed exactly as it is written. New
-                  lines and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.This is some text. It will be displayed exactly as
-                  it is written. New lines and spaces are preserved.This is some
-                  text. It will be displayed exactly as it is written. New lines
-                  and spaces are preserved.This is some text. It will be
-                  displayed exactly as it is written. New lines and spaces are
-                  preserved.
+                  <div className="flex w-full bg-blue-200 pl-10 pt-10 pb-10">
+                    <div>
+                      <h3 className="text-xl">Components</h3>
+                      It will be displayed exactly as it is written. New lines
+                      and spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved. This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved.This
+                      is some text. It will be displayed exactly as it is
+                      written. New lines and spaces are preserved.This is some
+                      text. It will be displayed exactly as it is written. New
+                      lines and spaces are preserved.This is some text. It will
+                      be displayed exactly as it is written. New lines and
+                      spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved.This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved. It
+                      will be displayed exactly as it is written. New lines and
+                      spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved. This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved.This
+                      is some text. It will be displayed exactly as it is
+                      written. New lines and spaces are preserved.This is some
+                      text. It will be displayed exactly as it is written. New
+                      lines and spaces are preserved.This is some text. It will
+                      be displayed exactly as it is written. New lines and
+                      spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved.This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved. It
+                      will be displayed exactly as it is written. New lines and
+                      spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved. This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved.This
+                      is some text. It will be displayed exactly as it is
+                      written. New lines and spaces are preserved.This is some
+                      text. It will be displayed exactly as it is written. New
+                      lines and spaces are preserved.This is some text. It will
+                      be displayed exactly as it is written. New lines and
+                      spaces are preserved.This is some text. It will be
+                      displayed exactly as it is written. New lines and spaces
+                      are preserved.This is some text. It will be displayed
+                      exactly as it is written. New lines and spaces are
+                      preserved.This is some text. It will be displayed exactly
+                      as it is written. New lines and spaces are preserved.
+                    </div>
+                    <div
+                      style={{
+                        height: "300px",
+                      }}
+                      className="ComponentsScroll flex flex-col ml-10 bg-gray-400 w-[100px] sticky top-[200px]"
+                    >
+                      <CustomScrollBar element={componentRef} />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
