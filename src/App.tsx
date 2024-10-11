@@ -20,11 +20,12 @@ export default function App() {
 
     const editorScrollTop = editorElement?.scrollTop;
     const componentsScrollTop = componentsElement?.scrollTop;
-
-    const isHidden =
-      editorScrollTop < 5 && (showComponents ? componentsScrollTop < 5 : true);
-
-    setHeaderVisible(isHidden);
+    if (editorScrollTop && componentsScrollTop) {
+      const isHidden =
+        editorScrollTop < 5 &&
+        (showComponents ? componentsScrollTop < 5 : true);
+      setHeaderVisible(isHidden);
+    }
   };
 
   return (
