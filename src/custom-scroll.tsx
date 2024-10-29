@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { throttle } from "./utils";
 
 export const CustomScrollBar = ({
   element,
@@ -7,11 +8,11 @@ export const CustomScrollBar = ({
 }) => {
   const thumbRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
 
   let thumbTop = 0; // Replaces state
   let startPosition = 0; // Mouse Y position when dragging starts
   let dragOffset = 0; // Offset between where the user clicked and the top of the thumb
+  const isDraggingRef = useRef(false);
 
   useEffect(() => {
     const contentElement = element.current;
@@ -27,10 +28,9 @@ export const CustomScrollBar = ({
         // Calculate the thumb position based on the percentage scrolled
         const thumbPosition = ((300 - 40) * percentage) / 100; // 300px total height, 40px thumb height
 
-        // setScrollRatio(percentage);
-        thumbTop = thumbPosition; // Update let variable
+        thumbTop = thumbPosition;
         if (thumbRef.current) {
-          thumbRef.current.style.top = `${thumbTop}px`; // Directly update the thumb's position
+          thumbRef.current.style.top = `${thumbTop}px`;
         }
       };
 
@@ -44,7 +44,7 @@ export const CustomScrollBar = ({
 
   // Handle thumb drag
   const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
 
     const scrollElement = element.current;
     const thumb = thumbRef.current;
@@ -59,7 +59,6 @@ export const CustomScrollBar = ({
       let newThumbTop =
         e.clientY - scrollRef.current?.getBoundingClientRect().top - dragOffset;
 
-      // Bound thumb movement to scrollbar height
       const maxThumbTop = scrollBarHeight;
       if (newThumbTop < 0) {
         newThumbTop = 0;
@@ -67,13 +66,13 @@ export const CustomScrollBar = ({
         newThumbTop = maxThumbTop;
       }
 
-      thumb.style.top = `${newThumbTop}px`; // Directly update the thumb's position
+      thumb.style.top = `${newThumbTop}px`;
 
       // Calculate the new scroll position based on thumb position
       const newScrollRatio = newThumbTop / maxThumbTop;
       const newScrollTop = newScrollRatio * scrollableHeight;
 
-      scrollElement.scrollTop = newScrollTop; // Scroll the content
+      scrollElement.scrollTop = newScrollTop;
     }
   };
 
@@ -81,30 +80,31 @@ export const CustomScrollBar = ({
     e.preventDefault();
     startPosition = e.clientY; // Store the mouse position when clicking
 
-    // Calculate the offset between the click point and the top of the thumb
     const thumbRect = thumbRef.current?.getBoundingClientRect();
     if (thumbRect) {
-      dragOffset = startPosition - thumbRect.top; // Store the offset between the mouse click and the thumb's top
+      dragOffset = startPosition - thumbRect.top;
     }
 
-    setIsDragging(true);
+    isDraggingRef.current = true;
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    isDraggingRef.current = false;
   };
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
+    window.addEventListener("mousemove", throttle(handleMouseMove, 50), {
+      passive: true,
+    });
+    window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging]);
+  }, []);
+
+  console.log("isDragging: ", isDraggingRef);
 
   return (
     <div
@@ -116,7 +116,7 @@ export const CustomScrollBar = ({
         <div
           ref={thumbRef}
           onMouseDown={handleMouseDown}
-          className="absolute bg-blue-800 rounded transition-all duration-100 ease-in-out  w-8 h-8 -left-3 cursor-pointer rounded-full border-scroll border-[0.5rem]"
+          className="absolute bg-blue-800 transition-all duration-100 ease-in-out  w-8 h-8 -left-3 cursor-pointer rounded-full border-scroll border-[0.5rem]"
           style={{ height: 40, top: `${thumbTop}px` }}
         />
       </div>

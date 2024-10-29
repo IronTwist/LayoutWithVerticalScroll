@@ -13,7 +13,8 @@ export default function App() {
   const editorElement = editorRef.current;
   const componentsElement = componentRef.current;
 
-  const [computedPadding, setComputedPadding] = useState(0);
+  const [lastPaddingSize, setLastPaddingSize] = useState(0);
+  let computedPadding = 0;
 
   const handleClick = () => {
     setShowComponents(!showComponents);
@@ -24,25 +25,60 @@ export default function App() {
     const componentsScrollTop = componentsElement?.scrollTop as number;
 
     const isHidden =
-      editorScrollTop < 5 && (showComponents ? componentsScrollTop < 5 : true);
+      editorScrollTop < 45 &&
+      (showComponents ? componentsScrollTop < 45 : true);
 
     setHeaderVisible(isHidden);
-
-    console.log("ScrollableEditor", editorElement?.scrollTop);
   };
 
   const resizeView = () => {
-    // console.log("-->", window.innerWidth - 1800);
-    const paddingSize = (window.innerWidth - 1800) / 2;
-    console.log("paddingSize", paddingSize);
+    let paddingSize = (window.innerWidth - 1800) / 2;
     if (paddingSize > 0) {
-      setComputedPadding(paddingSize);
+      computedPadding = paddingSize;
     } else {
       if (computedPadding !== 0) {
-        setComputedPadding(0);
+        computedPadding = 0;
       }
     }
+
+    setLastPaddingSize(computedPadding);
+
+    const header = document.getElementById("header");
+    const editorView = document.getElementById("editor-view");
+    const componentView = document.getElementById("component-view");
+
+    if (header && editorView) {
+      header.style.display = "absolute";
+      header.style.right = `${computedPadding}px`;
+      header.style.left = `${computedPadding}px`;
+
+      editorView.style.paddingRight = `${
+        computedPadding > 0 ? computedPadding : 0
+      }px`;
+      editorView.style.left = `${computedPadding > 0 ? computedPadding : 0}px`;
+    }
+
+    if (componentView) {
+      componentView.style.paddingLeft = `${
+        computedPadding > 0 ? computedPadding : 0
+      }px`;
+      componentView.style.right = `${
+        computedPadding > 0 ? computedPadding : 0
+      }px`;
+    }
   };
+
+  useEffect(() => {
+    const componentView = document.getElementById("component-view");
+    if (showComponents && componentView) {
+      componentView.style.paddingLeft = `${
+        lastPaddingSize > 0 ? lastPaddingSize : 0
+      }px`;
+      componentView.style.right = `${
+        lastPaddingSize > 0 ? lastPaddingSize : 0
+      }px`;
+    }
+  }, [showComponents]);
 
   useEffect(() => {
     window.addEventListener("resize", resizeView);
@@ -55,7 +91,11 @@ export default function App() {
         <div className="Board">
           <div
             ref={headerRef}
-            className={`flex Header absolute top-0 bg-blue-500 text right-[${computedPadding}px] left-[${computedPadding}px] max-w-[1800px] w-[100%] py-5 px-10 justify-between overflow-hidden z-10 transition-opacity duration-300 ${
+            style={{
+              display: "absolute",
+            }}
+            id="header"
+            className={`flex Header absolute top-0 bg-blue-500 text max-w-[1800px] w-[100%] py-5 px-10 justify-between overflow-hidden z-10 transition-opacity duration-300 ${
               headerVisible ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -87,12 +127,9 @@ export default function App() {
               }}
             >
               <div
+                id="editor-view"
                 style={{
                   position: showComponents ? "absolute" : "relative",
-                  paddingRight: `${
-                    computedPadding > 0 ? computedPadding : "0"
-                  }px`,
-                  left: `${computedPadding > 0 ? computedPadding : "0"}px`,
                 }}
                 className={`EditorView flex flex-col pt-16 pb-10
                 w-full`}
@@ -387,12 +424,9 @@ export default function App() {
                 }}
               >
                 <div
+                  id="component-view"
                   style={{
                     position: "absolute",
-                    paddingLeft: `${
-                      computedPadding > 0 ? computedPadding : "0"
-                    }px`,
-                    right: `${computedPadding > 0 ? computedPadding : "0"}px`,
                   }}
                   className="ComponentsView flex flex-col pt-16 pb-10 w-full"
                 >
