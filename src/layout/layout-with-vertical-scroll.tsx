@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { PreviewButton } from "./PreviewButton";
-import "./styles.css";
-import { CustomScrollBar } from "./custom-scroll";
+import { PreviewButton } from "../components/preview-button";
+import { CustomScrollBar } from "../components/custom-scroll";
 
-export default function App() {
+export default function LayoutWithVerticalScroll() {
   const [showComponents, setShowComponents] = useState(true);
   const [headerVisible, setHeaderVisible] = useState(true);
   const mainRef = useRef<HTMLDivElement | null>(null);
@@ -100,7 +99,10 @@ export default function App() {
             }`}
           >
             <div>Logo</div>
-            <PreviewButton onClick={handleClick} />
+            <PreviewButton
+              showComponents={showComponents}
+              onClick={handleClick}
+            />
           </div>
           <div
             className="EditorAndComponets flex w-full bg-yellow-400 overflow-y-scroll scrollbar-hide"

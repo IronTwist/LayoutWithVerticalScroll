@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { throttle } from "./utils";
+import React, { useEffect, useRef } from "react";
+import { throttle } from "../utils/utils";
 
 export const CustomScrollBar = ({
   element,
@@ -42,7 +42,6 @@ export const CustomScrollBar = ({
     }
   }, [element]);
 
-  // Handle thumb drag
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDraggingRef.current) return;
 
@@ -78,7 +77,7 @@ export const CustomScrollBar = ({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    startPosition = e.clientY; // Store the mouse position when clicking
+    startPosition = e.clientY;
 
     const thumbRect = thumbRef.current?.getBoundingClientRect();
     if (thumbRect) {
@@ -104,14 +103,11 @@ export const CustomScrollBar = ({
     };
   }, []);
 
-  console.log("isDragging: ", isDraggingRef);
-
   return (
     <div
       ref={scrollRef}
       className="relative h-[340px] w-10 overflow-hidden flex items-stretch"
     >
-      {/* Custom Scrollbar */}
       <div className="absolute top-0 right-0 w-2 h-full bg-gray-200 rounded -translate-x-4">
         <div
           ref={thumbRef}
